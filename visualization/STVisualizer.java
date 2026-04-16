@@ -2,16 +2,62 @@ package visualization;
 
 import datastructure.ST;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.Queue;
 import javax.swing.*;
 
 public class STVisualizer extends JPanel {
     private final ST<Integer, String> st;
+    private final Queue<Operation> operationQueue = new LinkedList<>();
+    private final Timer animationTimer;
     private final int nodeRadius = 20;
     private final int levelHeight = 60;
+    private final int stepDelay = 900;
+
+    private static class Operation {
+        private final Integer key;
+        private final String value;
+
+        private Operation(Integer key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
 
     public STVisualizer() {
         this.st = new ST<>();
         setBackground(Color.WHITE);
+        initializeSampleTree();
+        animationTimer = new Timer(stepDelay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                processNextOperation();
+            }
+        });
+    }
+
+    private void initializeSampleTree() {
+        st.put(50, "M");
+        st.put(30, "C");
+        st.put(70, "R");
+        st.put(20, "B");
+        st.put(40, "E");
+        st.put(60, "P");
+        st.put(80, "Z");
+        repaint();
+    }
+
+    public void enqueuePut(Integer key, String val) {
+        operationQueue.add(new Operation(key, val));
+        if (!animationTimer.isRunning()) {
+            animationTimer.start();
+        }
+    }
+
+    public void enqueueDelete(Integer key) {
+        enqueuePut(key, null);
     }
 
     public void put(Integer key, String val) {
@@ -19,6 +65,21 @@ public class STVisualizer extends JPanel {
             st.delete(key);
         } else {
             st.put(key, val);
+        }
+        repaint();
+    }
+
+    private void processNextOperation() {
+        if (operationQueue.isEmpty()) {
+            animationTimer.stop();
+            return;
+        }
+
+        Operation operation = operationQueue.poll();
+        if (operation.value == null || operation.value.isEmpty()) {
+            st.delete(operation.key);
+        } else {
+            st.put(operation.key, operation.value);
         }
         repaint();
     }
@@ -78,6 +139,8 @@ public class STVisualizer extends JPanel {
         JTextField valField = new JTextField(5);
         JButton putButton = new JButton("Put");
         JButton deleteButton = new JButton("Delete");
+        JButton demoButton = new JButton("Demo");
+        JButton resetButton = new JButton("Reset");
 
         controlPanel.add(new JLabel("Key:"));
         controlPanel.add(keyField);
@@ -85,6 +148,8 @@ public class STVisualizer extends JPanel {
         controlPanel.add(valField);
         controlPanel.add(putButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(demoButton);
+        controlPanel.add(resetButton);
 
         frame.add(controlPanel, BorderLayout.SOUTH);
 
@@ -92,7 +157,7 @@ public class STVisualizer extends JPanel {
             try {
                 int key = Integer.parseInt(keyField.getText());
                 String val = valField.getText();
-                visualizer.put(key, val);
+                visualizer.enqueuePut(key, val);
                 keyField.setText("");
                 valField.setText("");
             } catch (NumberFormatException ex) {
@@ -103,12 +168,42 @@ public class STVisualizer extends JPanel {
         deleteButton.addActionListener(e -> {
             try {
                 int key = Integer.parseInt(keyField.getText());
-                visualizer.put(key, null); // Deleting by putting null
+                visualizer.enqueueDelete(key);
                 keyField.setText("");
                 valField.setText("");
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(frame, "Key must be an integer.");
             }
+        });
+
+        demoButton.addActionListener(e -> {
+            visualizer.enqueuePut(25, "F");
+            visualizer.enqueuePut(35, "G");
+            visualizer.enqueueDelete(30);
+            visualizer.enqueuePut(65, "Q");
+            visualizer.enqueueDelete(70);
+        });
+
+        resetButton.addActionListener(e -> {
+            visualizer.operationQueue.clear();
+            if (visualizer.animationTimer.isRunning()) {
+                visualizer.animationTimer.stop();
+            }
+            visualizer.st.delete(20);
+            visualizer.st.delete(40);
+            visualizer.st.delete(60);
+            visualizer.st.delete(80);
+            visualizer.st.delete(30);
+            visualizer.st.delete(70);
+            visualizer.st.delete(50);
+            visualizer.st.put(50, "M");
+            visualizer.st.put(30, "C");
+            visualizer.st.put(70, "R");
+            visualizer.st.put(20, "B");
+            visualizer.st.put(40, "E");
+            visualizer.st.put(60, "P");
+            visualizer.st.put(80, "Z");
+            visualizer.repaint();
         });
 
         frame.setVisible(true);
