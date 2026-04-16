@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "STDriver",
+            "request": "launch",
+            "mainClass": "driver.STDriver",
+            "projectName": "Assignment9_803ed987"
+        },
+        {
+            "type": "java",
+            "name": "STVisualizer",
+            "request": "launch",
+            "mainClass": "visualization.STVisualizer",
+            "projectName": "Assignment9_803ed987"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
+}

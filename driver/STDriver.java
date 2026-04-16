@@ -1,3 +1,13 @@
+/**
+ * Ordered Symbol Table Testing Client
+ * @author Maksym Ovcharenko
+ * Course: SDT 202 Design and Analysis of Data Structures and Algorithms
+ * Due Date: 38th of April
+ * Time Spent: 4 hours
+ * Description: Tests each operation in the ST implementation.
+ * AI Tools: No AI code generation tools were used
+ */
+
 package driver;
 
 import datastructure.ST;
