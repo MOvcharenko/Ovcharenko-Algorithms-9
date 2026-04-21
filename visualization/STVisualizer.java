@@ -13,7 +13,7 @@ public class STVisualizer extends JPanel {
     private final Timer animationTimer;
     private final int nodeRadius = 20;
     private final int levelHeight = 60;
-    private final int stepDelay = 800;
+    private final int stepDelay = 1000;
     
     // Visualization state
     private Node highlightedNode = null;
